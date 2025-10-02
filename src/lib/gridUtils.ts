@@ -1,6 +1,9 @@
-export type Cell = {
+export type Coord = {
   row: number;
   col: number;
+};
+
+export type Cell = Coord & {
   isWall: boolean;
 };
 

@@ -1,11 +1,13 @@
+import { type Cell, type Coord } from '@/lib/gridUtils';
 import MazeCell from './MazeCell';
-import { type Cell } from '@/lib/gridUtils';
 
 type MazeGridProps = {
   grid: Cell[][];
+  start: Coord;
+  end: Coord;
 };
 
-export default function MazeGrid({ grid }: MazeGridProps) {
+export default function MazeGrid({ grid, start, end }: MazeGridProps) {
   return (
     <div
       className="grid gap-0"
@@ -15,7 +17,7 @@ export default function MazeGrid({ grid }: MazeGridProps) {
       }}
     >
       {grid.flat().map((cell) => (
-        <MazeCell key={`${cell.row}-${cell.col}`} cell={cell} />
+        <MazeCell key={`${cell.row}-${cell.col}`} cell={cell} start={start} end={end} />
       ))}
     </div>
   );
