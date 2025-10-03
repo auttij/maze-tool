@@ -6,6 +6,7 @@ type PlaybackControlsProps = {
   onPlay: () => void;
   onPause: () => void;
   onStep: () => void;
+  onReset: () => void;
   speed: number;
   onSpeedChange: (val: number) => void;
 };

@@ -10,7 +10,7 @@ function App() {
   const endPos: Coord = { row: gridSize - 1, col: gridSize - 1 };
   const [speed, setSpeed] = useState(40);
 
-  const { grid, start, stop, step, isRunning } = useMaze(gridSize + 1, gridSize + 1, speed);
+  const { grid, start, stop, step, reset, isRunning } = useMaze(gridSize + 1, gridSize + 1, speed);
   const mazeProps = { grid, start: startPos, end: endPos };
 
   return (
@@ -22,6 +22,7 @@ function App() {
         onPlay={start}
         onPause={stop}
         onStep={step}
+        onReset={reset}
         speed={speed}
         onSpeedChange={setSpeed}
       />

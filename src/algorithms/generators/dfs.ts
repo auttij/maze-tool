@@ -1,18 +1,12 @@
-import { type Cell } from '@/lib/gridUtils';
+import { type Cell, type MazeStep } from '@/lib/gridUtils';
+import { createEmptyGrid } from '@/lib/gridUtils';
 
 export function generateMazeDFS(rows: number, cols: number): Cell[][] {
   // Ensure odd dimensions (so paths have walls around them)
   if (rows % 2 === 0) rows++;
   if (cols % 2 === 0) cols++;
 
-  // Start with all walls
-  const grid: Cell[][] = Array.from({ length: rows }, (_, r) =>
-    Array.from({ length: cols }, (_, c) => ({
-      row: r,
-      col: c,
-      isWall: true,
-    })),
-  );
+  const grid: Cell[][] = createEmptyGrid(rows, cols);
 
   const dirs = [
     [0, 2],
@@ -50,17 +44,11 @@ export function generateMazeDFS(rows: number, cols: number): Cell[][] {
   return grid;
 }
 
-export function* generateMazeDFSAnimated(rows: number, cols: number): Generator<Cell[][]> {
+export function* generateMazeDFSAnimated(rows: number, cols: number): Generator<MazeStep> {
   if (rows % 2 === 0) rows++;
   if (cols % 2 === 0) cols++;
 
-  const grid: Cell[][] = Array.from({ length: rows }, (_, r) =>
-    Array.from({ length: cols }, (_, c) => ({
-      row: r,
-      col: c,
-      isWall: true,
-    })),
-  );
+  const grid: Cell[][] = createEmptyGrid(rows, cols);
 
   const dirs = [
     [0, 2],
@@ -75,7 +63,6 @@ export function* generateMazeDFSAnimated(rows: number, cols: number): Generator<
 
   const stack: [number, number][] = [[1, 1]];
   grid[1][1].isWall = false;
-  yield structuredClone(grid); // emit initial state
 
   while (stack.length > 0) {
     const [r, c] = stack[stack.length - 1];
@@ -85,12 +72,16 @@ export function* generateMazeDFSAnimated(rows: number, cols: number): Generator<
 
     if (neighbors.length > 0) {
       const [nr, nc] = neighbors[Math.floor(Math.random() * neighbors.length)];
-      grid[r + (nr - r) / 2][c + (nc - c) / 2].isWall = false;
+      const [pr, pc] = [r + (nr - r) / 2, c + (nc - c) / 2];
+
+      grid[pr][pc].isWall = false;
       grid[nr][nc].isWall = false;
       stack.push([nr, nc]);
-      yield structuredClone(grid); // emit after each carve step
+
+      yield { type: 'carve', from: [r, c], to: [nr, nc] };
     } else {
       stack.pop();
+      // yield { type: 'backtrack', cell: [r, c] };
     }
   }
 }
