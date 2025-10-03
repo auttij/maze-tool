@@ -42,7 +42,7 @@ export function useMaze(rows: number, cols: number, speed: number) {
           setGrid(value!);
         }
       }
-    });
+    }, speed);
 
     intervalRef.current = timer;
     return () => clearInterval(timer);
