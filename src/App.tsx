@@ -1,4 +1,4 @@
-import { MazeBoard } from '@/components/maze/MazeBoard';
+import MazeGrid from '@/components/maze/MazeGrid';
 import { PlaybackControls } from '@/components/control-panel/PlaybackControls';
 import { type Coord } from './lib/gridUtils';
 import { useMaze } from '@/hooks/useMaze';
@@ -15,7 +15,7 @@ function App() {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center bg-gray-100">
-      {grid.length > 0 && <MazeBoard {...mazeProps} />}
+      {grid.length > 0 && <MazeGrid {...mazeProps} />}
 
       <PlaybackControls
         isRunning={isRunning}

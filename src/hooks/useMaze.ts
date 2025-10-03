@@ -11,19 +11,13 @@ export function useMaze(rows: number, cols: number, speed: number) {
   const intervalRef = useRef<number | null>(null);
 
   function applyStep(grid: Cell[][], step: MazeStep): Cell[][] {
-    const newGrid = grid.map((row) => row.slice()); // shallow clone
-
     if (step.type === 'carve') {
       const [r, c] = step.from;
       const [nr, nc] = step.to;
-      newGrid[r + (nr - r) / 2][c + (nc - c) / 2].isWall = false;
-      newGrid[nr][nc].isWall = false;
-    } else if (step.type === 'backtrack') {
-      const [r, c] = step.cell;
-      // newGrid[r][c].isBacktracked = true;
+      grid[r + (nr - r) / 2][c + (nc - c) / 2].isWall = false;
+      grid[nr][nc].isWall = false;
     }
-
-    return newGrid;
+    return [...grid];
   }
 
   function applyAndRecord(step: MazeStep) {
