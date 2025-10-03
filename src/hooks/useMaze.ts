@@ -1,38 +1,44 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { type Cell, type MazeStep, createEmptyGrid } from '@/lib/gridUtils';
 import { generateMazeDFSAnimated } from '@/algorithms/generators/dfs';
 
 export function useMaze(rows: number, cols: number, speed: number) {
-  const [grid, setGrid] = useState(createEmptyGrid(rows, cols));
+  const [version, setVersion] = useState(0); // force re-render counter
   const [history, setHistory] = useState<MazeStep[]>([]);
   const [isRunning, setIsRunning] = useState(false);
 
+  const gridRef = useRef<Cell[][]>(createEmptyGrid(rows, cols));
   const generatorRef = useRef<Generator<MazeStep>>(null);
   const intervalRef = useRef<number | null>(null);
 
-  function applyStep(grid: Cell[][], step: MazeStep): Cell[][] {
+  const forceUpdate = useCallback(() => {
+    setVersion((v) => v + 1);
+  }, []);
+
+  function applyStep(grid: Cell[][], step: MazeStep) {
     if (step.type === 'carve') {
       const [r, c] = step.from;
       const [nr, nc] = step.to;
       grid[r + (nr - r) / 2][c + (nc - c) / 2].isWall = false;
       grid[nr][nc].isWall = false;
     }
-    return [...grid];
   }
 
   function applyAndRecord(step: MazeStep) {
     setHistory((h) => [...h, step]);
-    setGrid((g) => applyStep(g, step));
+    applyStep(gridRef.current, step);
   }
 
   const reset = () => {
-    setGrid(createEmptyGrid(rows, cols));
+    gridRef.current = createEmptyGrid(rows, cols);
+    setHistory([]);
     generatorRef.current = null;
     setIsRunning(false);
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
+    forceUpdate();
   };
 
   const start = () => {
@@ -81,5 +87,12 @@ export function useMaze(rows: number, cols: number, speed: number) {
     return () => clearInterval(timer);
   }, [isRunning, speed]);
 
-  return { grid, start, stop, step, reset, isRunning };
+  return {
+    grid: gridRef.current,
+    start,
+    stop,
+    step,
+    reset,
+    isRunning,
+  };
 }
