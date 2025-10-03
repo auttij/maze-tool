@@ -1,21 +1,30 @@
-import { useState } from 'react';
-import { Button } from './components/ui/button';
-import { generateMazeDFS } from '@/algorithms/generators/dfs';
 import { MazeBoard } from '@/components/maze/MazeBoard';
+import { PlaybackControls } from '@/components/control-panel/PlaybackControls';
 import { type Coord } from './lib/gridUtils';
+import { useMaze } from '@/hooks/useMaze';
+import { useState } from 'react';
 
 function App() {
-  const [grid, setGrid] = useState(() => generateMazeDFS(21, 21));
-  const gridSize = 20;
-  const startPos: Coord = { row: 0, col: 0 };
-  const endPos: Coord = { row: gridSize, col: gridSize };
+  const gridSize = 40;
+  const startPos: Coord = { row: 1, col: 1 };
+  const endPos: Coord = { row: gridSize - 1, col: gridSize - 1 };
+  const [speed, setSpeed] = useState(100);
+
+  const { grid, start, stop, step, isRunning } = useMaze(gridSize + 1, gridSize + 1, speed);
+  const mazeProps = { grid, start: startPos, end: endPos };
 
   return (
     <div className="flex h-screen flex-col items-center justify-center bg-gray-100">
-      <MazeBoard grid={grid} start={startPos} end={endPos} />
-      <Button onClick={() => setGrid(generateMazeDFS(gridSize + 1, gridSize + 1))}>
-        Generate Maze
-      </Button>
+      {grid.length > 0 && <MazeBoard {...mazeProps} />}
+
+      <PlaybackControls
+        isRunning={isRunning}
+        onPlay={start}
+        onPause={stop}
+        onStep={step}
+        speed={speed}
+        onSpeedChange={setSpeed}
+      />
     </div>
   );
 }
