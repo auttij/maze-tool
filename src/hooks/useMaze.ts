@@ -9,7 +9,7 @@ export function useMaze(rows: number, cols: number, speed: number) {
 
   const gridRef = useRef<Cell[][]>(createEmptyGrid(rows, cols));
   const generatorRef = useRef<Generator<MazeStep>>(null);
-  const intervalRef = useRef<number | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout>(null);
 
   const forceUpdate = useCallback(() => {
     setVersion((v) => v + 1);
