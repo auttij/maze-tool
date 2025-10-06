@@ -3,6 +3,7 @@ import { Slider } from '@/components/ui/slider';
 
 type PlaybackControlsProps = {
   isRunning: boolean;
+  generate: () => void;
   onPlay: () => void;
   onPause: () => void;
   onStep: () => void;
@@ -13,6 +14,7 @@ type PlaybackControlsProps = {
 
 export function PlaybackControls({
   isRunning,
+  generate,
   onPlay,
   onPause,
   onStep,
@@ -23,6 +25,9 @@ export function PlaybackControls({
 
   return (
     <div className="mt-4 flex items-center gap-4">
+      <Button onClick={generate} variant="default">
+        Generate
+      </Button>
       {isRunning ? (
         <Button onClick={onPause} variant="destructive">
           Pause

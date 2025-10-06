@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { type Cell, type MazeStep, createEmptyGrid } from '@/lib/gridUtils';
-import { generateMazeDFSAnimated } from '@/algorithms/generators/dfs';
+import { generateMazeDFSAnimated, generateMazeDFS } from '@/algorithms/generators/dfs';
 
 export function useMaze(rows: number, cols: number, speed: number) {
   const [version, setVersion] = useState(0); // force re-render counter
@@ -28,6 +28,11 @@ export function useMaze(rows: number, cols: number, speed: number) {
     setHistory((h) => [...h, step]);
     applyStep(gridRef.current, step);
   }
+
+  const generate = () => {
+    reset();
+    gridRef.current = generateMazeDFS(rows, cols);
+  };
 
   const reset = () => {
     gridRef.current = createEmptyGrid(rows, cols);
@@ -89,6 +94,7 @@ export function useMaze(rows: number, cols: number, speed: number) {
 
   return {
     grid: gridRef.current,
+    generate,
     start,
     stop,
     step,

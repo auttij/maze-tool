@@ -5,12 +5,16 @@ import { useMaze } from '@/hooks/useMaze';
 import { useState } from 'react';
 
 function App() {
-  const gridSize = 40;
+  const gridSize = 20;
   const startPos: Coord = { row: 1, col: 1 };
   const endPos: Coord = { row: gridSize - 1, col: gridSize - 1 };
   const [speed, setSpeed] = useState(40);
 
-  const { grid, start, stop, step, reset, isRunning } = useMaze(gridSize + 1, gridSize + 1, speed);
+  const { grid, generate, start, stop, step, reset, isRunning } = useMaze(
+    gridSize + 1,
+    gridSize + 1,
+    speed,
+  );
   const mazeProps = { grid, start: startPos, end: endPos };
 
   return (
@@ -19,6 +23,7 @@ function App() {
 
       <PlaybackControls
         isRunning={isRunning}
+        generate={generate}
         onPlay={start}
         onPause={stop}
         onStep={step}
