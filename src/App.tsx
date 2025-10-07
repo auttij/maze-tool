@@ -6,9 +6,9 @@ import { useState } from 'react';
 
 function App() {
   const gridSize = 20;
-  const startPos: Coord = { row: 1, col: 1 };
-  const endPos: Coord = { row: gridSize - 1, col: gridSize - 1 };
-  const [speed, setSpeed] = useState(40);
+  const startPos: Coord = { row: 0, col: 0 };
+  const endPos: Coord = { row: gridSize, col: gridSize };
+  const [speed, setSpeed] = useState(10);
 
   const { grid, generate, start, stop, step, reset, isRunning } = useMaze(
     gridSize + 1,

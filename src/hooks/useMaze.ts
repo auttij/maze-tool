@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { type Cell, type MazeStep, createEmptyGrid } from '@/lib/gridUtils';
+import { type Cell, type MazeStep, createEmptyGrid, carveWall } from '@/lib/gridUtils';
 import { generateMazeDFSAnimated, generateMazeDFS } from '@/algorithms/generators/dfs';
 
 export function useMaze(rows: number, cols: number, speed: number) {
@@ -14,8 +14,10 @@ export function useMaze(rows: number, cols: number, speed: number) {
     if (step.type === 'carve') {
       const [r, c] = step.from;
       const [nr, nc] = step.to;
-      grid[r + (nr - r) / 2][c + (nc - c) / 2].isWall = false;
-      grid[nr][nc].isWall = false;
+
+      const cell = grid[r][c];
+      const neighbor = grid[nr][nc];
+      carveWall(cell, neighbor);
     }
     return [...grid];
   }
