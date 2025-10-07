@@ -17,7 +17,13 @@ export default function MazeGrid({ grid, start, end }: MazeGridProps) {
       }}
     >
       {grid.flat().map((cell) => (
-        <MazeCell key={`${cell.row}-${cell.col}`} {...cell} start={start} end={end} />
+        <MazeCell
+          key={`${cell.row}-${cell.col}`}
+          {...cell}
+          {...cell.walls}
+          start={start}
+          end={end}
+        />
       ))}
     </div>
   );
