@@ -1,49 +1,43 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { type Cell, type MazeStep, createEmptyGrid } from '@/lib/gridUtils';
 import { generateMazeDFSAnimated, generateMazeDFS } from '@/algorithms/generators/dfs';
 
 export function useMaze(rows: number, cols: number, speed: number) {
-  const [version, setVersion] = useState(0); // force re-render counter
+  const [grid, setGrid] = useState(createEmptyGrid(rows, cols));
   const [history, setHistory] = useState<MazeStep[]>([]);
   const [isRunning, setIsRunning] = useState(false);
 
-  const gridRef = useRef<Cell[][]>(createEmptyGrid(rows, cols));
   const generatorRef = useRef<Generator<MazeStep>>(null);
   const intervalRef = useRef<NodeJS.Timeout>(null);
 
-  const forceUpdate = useCallback(() => {
-    setVersion((v) => v + 1);
-  }, []);
-
-  function applyStep(grid: Cell[][], step: MazeStep) {
+  function applyStep(grid: Cell[][], step: MazeStep): Cell[][] {
     if (step.type === 'carve') {
       const [r, c] = step.from;
       const [nr, nc] = step.to;
       grid[r + (nr - r) / 2][c + (nc - c) / 2].isWall = false;
       grid[nr][nc].isWall = false;
     }
+    return [...grid];
   }
 
   function applyAndRecord(step: MazeStep) {
     setHistory((h) => [...h, step]);
-    applyStep(gridRef.current, step);
+    setGrid((g) => applyStep(g, step));
   }
 
   const generate = () => {
     reset();
-    gridRef.current = generateMazeDFS(rows, cols);
+    setGrid(generateMazeDFS(rows, cols));
   };
 
   const reset = () => {
-    gridRef.current = createEmptyGrid(rows, cols);
-    setHistory([]);
+    setGrid(createEmptyGrid(rows, cols));
     generatorRef.current = null;
     setIsRunning(false);
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-    forceUpdate();
   };
 
   const start = () => {
@@ -92,13 +86,5 @@ export function useMaze(rows: number, cols: number, speed: number) {
     return () => clearInterval(timer);
   }, [isRunning, speed]);
 
-  return {
-    grid: gridRef.current,
-    generate,
-    start,
-    stop,
-    step,
-    reset,
-    isRunning,
-  };
+  return { grid, generate, start, stop, step, reset, isRunning };
 }

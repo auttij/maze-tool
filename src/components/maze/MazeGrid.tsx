@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { type Cell, type Coord } from '@/lib/gridUtils';
 import MazeCell from './MazeCell';
 
@@ -8,7 +7,7 @@ type MazeGridProps = {
   end: Coord;
 };
 
-export default memo(function MazeGrid({ grid, start, end }: MazeGridProps) {
+export default function MazeGrid({ grid, start, end }: MazeGridProps) {
   return (
     <div
       className="grid gap-0"
@@ -22,4 +21,4 @@ export default memo(function MazeGrid({ grid, start, end }: MazeGridProps) {
       ))}
     </div>
   );
-});
+}
