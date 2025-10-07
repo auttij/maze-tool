@@ -18,6 +18,7 @@ export function PlaybackControls({
   onPlay,
   onPause,
   onStep,
+  onReset,
   speed,
   onSpeedChange,
 }: PlaybackControlsProps) {
@@ -33,9 +34,14 @@ export function PlaybackControls({
           Pause
         </Button>
       ) : (
-        <Button onClick={onPlay} variant="default">
-          Play
-        </Button>
+        <>
+          <Button onClick={onPlay} variant="default">
+            Play
+          </Button>
+          <Button onClick={onReset} variant="destructive">
+            Reset
+          </Button>
+        </>
       )}
 
       <Button onClick={onStep} variant="secondary">
