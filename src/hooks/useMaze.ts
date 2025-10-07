@@ -42,11 +42,15 @@ export function useMaze(rows: number, cols: number, speed: number) {
     }
   };
 
-  const start = () => {
+  const addGenerator = () => {
     if (!generatorRef.current) {
       reset();
       generatorRef.current = generateMazeDFSAnimated(rows, cols);
     }
+  };
+
+  const start = () => {
+    addGenerator();
     setIsRunning(true);
   };
 
@@ -59,6 +63,7 @@ export function useMaze(rows: number, cols: number, speed: number) {
   };
 
   const step = () => {
+    addGenerator();
     if (generatorRef.current) {
       const { value, done } = generatorRef.current.next();
       if (!done && value) {
