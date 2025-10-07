@@ -10,6 +10,8 @@ export function useMaze(rows: number, cols: number, speed: number) {
   const generatorRef = useRef<Generator<MazeStep>>(null);
   const intervalRef = useRef<NodeJS.Timeout>(null);
 
+  /* Helpers */
+
   function applyStep(grid: Cell[][], step: MazeStep): Cell[][] {
     if (step.type === 'carve') {
       const [r, c] = step.from;
@@ -27,6 +29,34 @@ export function useMaze(rows: number, cols: number, speed: number) {
     setGrid((g) => applyStep(g, step));
   }
 
+  const addGenerator = () => {
+    if (!generatorRef.current) {
+      reset();
+      generatorRef.current = generateMazeDFSAnimated(rows, cols);
+    }
+  };
+
+  const stopTimer = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  const processStep = () => {
+    if (generatorRef.current) {
+      const { value, done } = generatorRef.current.next();
+      if (done) {
+        generatorRef.current = null;
+        stop();
+      } else {
+        applyAndRecord(value);
+      }
+    }
+  };
+
+  /* Exposed functions */
+
   const generate = () => {
     reset();
     setGrid(generateMazeDFS(rows, cols));
@@ -35,18 +65,8 @@ export function useMaze(rows: number, cols: number, speed: number) {
   const reset = () => {
     setGrid(createEmptyGrid(rows, cols));
     generatorRef.current = null;
+    stopTimer();
     setIsRunning(false);
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  };
-
-  const addGenerator = () => {
-    if (!generatorRef.current) {
-      reset();
-      generatorRef.current = generateMazeDFSAnimated(rows, cols);
-    }
   };
 
   const start = () => {
@@ -55,38 +75,18 @@ export function useMaze(rows: number, cols: number, speed: number) {
   };
 
   const stop = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
+    stopTimer();
     setIsRunning(false);
   };
 
   const step = () => {
     addGenerator();
-    if (generatorRef.current) {
-      const { value, done } = generatorRef.current.next();
-      if (!done && value) {
-        applyAndRecord(value);
-      } else {
-        generatorRef.current = null;
-        stop();
-      }
-    }
+    processStep();
   };
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (isRunning && generatorRef.current) {
-        const { value, done } = generatorRef.current!.next();
-
-        if (done) {
-          generatorRef.current = null;
-          stop();
-        } else {
-          applyAndRecord(value);
-        }
-      }
+      if (isRunning) processStep();
     }, speed);
 
     intervalRef.current = timer;
