@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { type Cell, type MazeStep, createEmptyGrid, carveWall } from '@/lib/gridUtils';
-import { generateMazeDFSAnimated, generateMazeDFS } from '@/algorithms/generators/dfs';
+import { initGrid } from '@/lib/gridUtils';
+import { type MazeStep, applyStep } from '@/algorithms/MazeGenerator';
+import { getMazeGenerator } from '@/algorithms';
 
-export function useMaze(rows: number, cols: number, speed: number) {
-  const [grid, setGrid] = useState(createEmptyGrid(rows, cols));
+export function useMaze(rows: number, cols: number, speed: number, algorithm: string) {
+  const generator = getMazeGenerator(algorithm);
+  const [grid, setGrid] = useState(initGrid(rows, cols));
   const [history, setHistory] = useState<MazeStep[]>([]);
   const [isRunning, setIsRunning] = useState(false);
 
@@ -11,18 +13,6 @@ export function useMaze(rows: number, cols: number, speed: number) {
   const intervalRef = useRef<NodeJS.Timeout>(null);
 
   /* Helpers */
-
-  function applyStep(grid: Cell[][], step: MazeStep): Cell[][] {
-    if (step.type === 'carve') {
-      const [r, c] = step.from;
-      const [nr, nc] = step.to;
-
-      const cell = grid[r][c];
-      const neighbor = grid[nr][nc];
-      carveWall(cell, neighbor);
-    }
-    return [...grid];
-  }
 
   function applyAndRecord(step: MazeStep) {
     setHistory((h) => [...h, step]);
@@ -32,7 +22,7 @@ export function useMaze(rows: number, cols: number, speed: number) {
   const addGenerator = () => {
     if (!generatorRef.current) {
       reset();
-      generatorRef.current = generateMazeDFSAnimated(rows, cols);
+      generatorRef.current = generator.generateAnimated(rows, cols);
     }
   };
 
@@ -59,11 +49,11 @@ export function useMaze(rows: number, cols: number, speed: number) {
 
   const generate = () => {
     reset();
-    setGrid(generateMazeDFS(rows, cols));
+    setGrid(generator.generate(rows, cols));
   };
 
   const reset = () => {
-    setGrid(createEmptyGrid(rows, cols));
+    setGrid(initGrid(rows, cols));
     generatorRef.current = null;
     stopTimer();
     setIsRunning(false);

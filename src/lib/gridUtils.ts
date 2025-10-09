@@ -14,10 +14,6 @@ export type Cell = Coord & {
   walls: Walls;
 };
 
-export type MazeStep =
-  | { type: 'carve'; from: [number, number]; to: [number, number] }
-  | { type: 'backtrack'; cell: [number, number] };
-
 export const dirs = [
   [-1, 0],
   [0, 1],
@@ -25,7 +21,7 @@ export const dirs = [
   [0, -1],
 ];
 
-export function createEmptyGrid(rows: number, cols: number): Cell[][] {
+export function initGrid(rows: number, cols: number): Cell[][] {
   return Array.from({ length: rows }, (_, row) =>
     Array.from({ length: cols }, (_, col) => ({
       row,
@@ -33,6 +29,10 @@ export function createEmptyGrid(rows: number, cols: number): Cell[][] {
       walls: { n: true, e: true, s: true, w: true },
     })),
   );
+}
+
+export function inBounds(grid: Cell[][], r: number, c: number): boolean {
+  return r >= 0 && r < grid.length && c >= 0 && c < grid[0].length;
 }
 
 export function carveWall(cell: Cell, neighbor: Cell) {

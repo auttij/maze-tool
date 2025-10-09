@@ -14,6 +14,7 @@ function App() {
     gridSize + 1,
     gridSize + 1,
     speed,
+    'dfs',
   );
   const mazeProps = { grid, start: startPos, end: endPos };
 
