@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { initGrid } from '@/lib/gridUtils';
 import { type MazeStep, applyStep } from '@/algorithms/MazeGenerator';
-import { getMazeGenerator } from '@/algorithms';
+import { getMazeGenerator, listMazeGenerators } from '@/algorithms';
 
-export function useMaze(rows: number, cols: number, speed: number, algorithm: string) {
-  const generator = getMazeGenerator(algorithm);
+export function useMaze(rows: number, cols: number, speed: number, algorithmName: string) {
+  const generator = getMazeGenerator(algorithmName);
   const [grid, setGrid] = useState(initGrid(rows, cols));
   const [history, setHistory] = useState<MazeStep[]>([]);
   const [isRunning, setIsRunning] = useState(false);
@@ -85,3 +85,5 @@ export function useMaze(rows: number, cols: number, speed: number, algorithm: st
 
   return { grid, generate, start, stop, step, reset, isRunning };
 }
+
+export const availableGenerators = listMazeGenerators;

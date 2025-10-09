@@ -1,5 +1,6 @@
 import { type Cell } from '@/lib/gridUtils';
 import { type MazeStep, createMazeGenerator } from '@/algorithms/MazeGenerator';
+import { registerMazeGenerator } from '../registry';
 import { initGrid, dirs, carveWall, inBounds, unvisited } from '@/lib/gridUtils';
 
 export const DFSGenerator = createMazeGenerator(function* (rows, cols): Generator<MazeStep> {

@@ -1,12 +1,5 @@
-import { DFSGenerator } from './generators/dfs';
-import type { MazeGenerator } from './MazeGenerator';
+import { registerMazeGenerator, getMazeGenerator, listMazeGenerators } from './registry';
 
-export const mazeGenerators: Record<string, MazeGenerator> = {
-  dfs: DFSGenerator,
-};
+import.meta.glob('./generators/*.ts', { eager: true });
 
-export function getMazeGenerator(name: string): MazeGenerator {
-  const gen = mazeGenerators[name];
-  if (!gen) throw new Error(`Unknown generator: ${name}`);
-  return gen;
-}
+export { registerMazeGenerator, getMazeGenerator, listMazeGenerators };
