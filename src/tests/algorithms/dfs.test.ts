@@ -1,37 +1,21 @@
-import { describe, it, expect } from 'vitest';
-import { generateMazeDFSAnimated } from '@/algorithms/generators/dfs';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { DFSGenerator } from '@/algorithms/generators/dfs';
+import { type Cell } from '@/lib/gridUtils';
 
 describe('DFS Maze Generator', () => {
-  it('should generate a connected maze', () => {
-    const gen = generateMazeDFSAnimated(11, 11);
-    let last: any;
-    for (const step of gen) last = step;
+  const dfs = DFSGenerator;
+  let maze: Cell[][];
 
-    expect(last).toBeDefined();
+  beforeEach(() => {
+    maze = dfs.generate(10, 10);
   });
 
-  it('should carve each odd space', () => {
-    const size = 20;
-    const reachable: Record<string, boolean> = {};
-
-    for (var y = 1; y < size; y += 2) {
-      for (var x = 1; x < size; x += 2) {
-        reachable[`${y}-${x}`] = false;
-      }
-    }
-
-    const gen = generateMazeDFSAnimated(size, size);
-    for (const step of gen) {
-      if (step.type === 'carve') {
-        const { from, to } = step;
-
-        reachable[`${from[0]}-${from[1]}`] = true;
-        reachable[`${to[0]}-${to[1]}`] = true;
-      }
-    }
-
-    Object.entries(reachable).forEach(([key, val]) =>
-      expect([key, val]).toStrictEqual([key, true]),
-    );
+  it('should create maze where each cell has removed wall', () => {
+    maze.forEach((row) => {
+      row.forEach(({ walls }) => {
+        const { n, e, s, w } = walls;
+        expect(n && e && s && w).toBe(false);
+      });
+    });
   });
 });
