@@ -15,7 +15,7 @@ export function createMazeGenerator(
   animatedFn: (rows: number, cols: number) => Generator<MazeStep>,
 ): MazeGenerator {
   return {
-    generate(rows, cols) {
+    generate(rows, cols): Cell[][] {
       const grid = initGrid(rows, cols);
       for (const step of animatedFn(rows, cols)) {
         applyStep(grid, step);
