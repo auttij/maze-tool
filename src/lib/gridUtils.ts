@@ -35,6 +35,10 @@ export function inBounds(grid: Cell[][], r: number, c: number): boolean {
   return r >= 0 && r < grid.length && c >= 0 && c < grid[0].length;
 }
 
+export function unvisited(cell: Cell): boolean {
+  return Object.values(cell.walls).every((x) => x);
+}
+
 export function carveWall(cell: Cell, neighbor: Cell) {
   const dr = neighbor.row - cell.row;
   const dc = neighbor.col - cell.col;

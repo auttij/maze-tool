@@ -1,6 +1,6 @@
 import { type Cell } from '@/lib/gridUtils';
 import { type MazeStep, createMazeGenerator } from '@/algorithms/MazeGenerator';
-import { initGrid, dirs, carveWall, inBounds } from '@/lib/gridUtils';
+import { initGrid, dirs, carveWall, inBounds, unvisited } from '@/lib/gridUtils';
 
 export const DFSGenerator = createMazeGenerator(function* (rows, cols): Generator<MazeStep> {
   const grid: Cell[][] = initGrid(rows, cols);
@@ -11,9 +11,7 @@ export const DFSGenerator = createMazeGenerator(function* (rows, cols): Generato
     const [r, c] = stack[stack.length - 1];
     const neighbors = dirs
       .map(([dr, dc]) => [r + dr, c + dc] as [number, number])
-      .filter(
-        ([nr, nc]) => inBounds(grid, nr, nc) && Object.values(grid[nr][nc].walls).every((x) => x),
-      );
+      .filter(([nr, nc]) => inBounds(grid, nr, nc) && unvisited(grid[nr][nc]));
 
     if (neighbors.length > 0) {
       const [nr, nc] = neighbors[Math.floor(Math.random() * neighbors.length)];
@@ -30,3 +28,5 @@ export const DFSGenerator = createMazeGenerator(function* (rows, cols): Generato
     }
   }
 });
+
+registerMazeGenerator('Depth-first search', DFSGenerator);
