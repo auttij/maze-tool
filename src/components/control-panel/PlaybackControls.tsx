@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
+import AlgorithmSelect from './AlgorithmSelect';
 
 type PlaybackControlsProps = {
   isRunning: boolean;
@@ -10,6 +11,7 @@ type PlaybackControlsProps = {
   onReset: () => void;
   speed: number;
   onSpeedChange: (val: number) => void;
+  onAlgorithmChange: (val: string) => void;
 };
 
 export function PlaybackControls({
@@ -21,6 +23,7 @@ export function PlaybackControls({
   onReset,
   speed,
   onSpeedChange,
+  onAlgorithmChange,
 }: PlaybackControlsProps) {
   const speedOptions = [320, 160, 80, 40, 20, 10];
 
@@ -59,6 +62,8 @@ export function PlaybackControls({
           onValueChange={(val) => onSpeedChange(speedOptions[val[0]])}
         />
       </div>
+
+      <AlgorithmSelect onAlgorithmChange={onAlgorithmChange} />
     </div>
   );
 }

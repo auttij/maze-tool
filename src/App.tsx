@@ -9,12 +9,13 @@ function App() {
   const startPos: Coord = { row: 0, col: 0 };
   const endPos: Coord = { row: gridSize, col: gridSize };
   const [speed, setSpeed] = useState(10);
+  const [algo, setAlgorithm] = useState('Depth-first search');
 
   const { grid, generate, start, stop, step, reset, isRunning } = useMaze(
     gridSize + 1,
     gridSize + 1,
     speed,
-    'dfs',
+    algo,
   );
   const mazeProps = { grid, start: startPos, end: endPos };
 
@@ -31,6 +32,7 @@ function App() {
         onReset={reset}
         speed={speed}
         onSpeedChange={setSpeed}
+        onAlgorithmChange={setAlgorithm}
       />
     </div>
   );
